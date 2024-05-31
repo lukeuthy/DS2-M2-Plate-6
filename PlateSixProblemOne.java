@@ -1,0 +1,68 @@
+import java.util.*;
+
+public class PlateSixProblemOne {
+    private static void depthFirstSearch(String currentNode, Map<String, List<String>> adjacencyList, Set<String> visitedNodes) {
+        visitedNodes.add(currentNode);
+        for (String neighborNode : adjacencyList.get(currentNode)) {
+            if (!visitedNodes.contains(neighborNode)) {
+                depthFirstSearch(neighborNode, adjacencyList, visitedNodes);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        Map<String, List<String>> adjacencyList = new HashMap<>();
+        Set<String> allVertices = new HashSet<>();
+        System.out.println("____________________________________________________");
+        System.out.println("- CONNECTED GRAPH CHECKER -\nby Jasper Nikko M. NAVAREZ");
+        System.out.println("____________________________________________________");
+        System.out.println("Enter the edges (e.g., \"ab\"). Type 'end' to finish:");
+        
+        // Read input edges from the user
+        while (true) {
+            String edgeInput = scanner.nextLine();
+            if (edgeInput.equalsIgnoreCase("end")) {
+                break;
+            }
+
+            if (edgeInput.length() != 2) {
+                System.out.println("Invalid edge format. Please use the \"ab\" format.");
+                continue;
+            }
+
+            String firstVertex = edgeInput.substring(0, 1);
+            String secondVertex = edgeInput.substring(1);
+
+            allVertices.add(firstVertex);
+            allVertices.add(secondVertex);
+
+            adjacencyList.putIfAbsent(firstVertex, new ArrayList<>());
+            adjacencyList.putIfAbsent(secondVertex, new ArrayList<>());
+
+            adjacencyList.get(firstVertex).add(secondVertex);
+            adjacencyList.get(secondVertex).add(firstVertex);
+        }
+
+        Set<String> visitedNodes = new HashSet<>();
+        int numberOfComponents = 0;
+        
+        // Check each vertex to see if all edges are traversed without disconnection.
+        for (String vertex : allVertices) {
+            if (!visitedNodes.contains(vertex)) {
+                depthFirstSearch(vertex, adjacencyList, visitedNodes);
+                numberOfComponents++;
+            }
+        }
+
+        if (numberOfComponents == 1) {
+            System.out.println("The graph is connected.");
+        } else {
+            System.out.println("The graph is not connected.");
+            System.out.println("Number of connected components: " + numberOfComponents);
+        }
+
+        scanner.close();
+    }
+}
